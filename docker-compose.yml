@@ -1,0 +1,20 @@
+services:
+
+  generator:
+    container_name: generator
+    build: .
+    image: generator
+    volumes:
+      - type: bind
+        source: ./generator.py
+        target: /app/generator.py
+    command: [ "./generator.py" ]
+    #ports:
+    #  - "8080:8080"
+    networks:
+      - my-net
+    depends_on:
+      - consumer
+
+networks:
+  my-net:
