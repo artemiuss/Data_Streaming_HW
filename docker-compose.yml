@@ -16,5 +16,37 @@ services:
     depends_on:
       - consumer
 
+  consumer:
+    container_name: consumer
+    build: .
+    image: consumer
+    volumes:
+      - type: bind
+        source: ./consumer.py
+        target: /app/consumer.py
+    command: [ "./consumer.py" ]
+    #ports:
+    #  - "8080:8080"
+    networks:
+      - my-net
+
+  report:
+    container_name: report
+    build: .
+    image: report
+    volumes:
+      - type: bind
+        source: ./report.py
+        target: /app/report.py
+    command: [ "./report.py" ]
+    #ports:
+    #  - "8080:8080"
+    networks:
+      - my-net
+    depends_on:
+      report:
+        condition: service_completed_successfully
+
 networks:
   my-net:
+
