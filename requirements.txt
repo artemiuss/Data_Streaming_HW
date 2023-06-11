@@ -2,3 +2,5 @@ kafka-python
 praw
 langdetect
 iso-639
+multi_rake
+nltk
