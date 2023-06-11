@@ -38,7 +38,7 @@ docker compose down
 ### Clean-Up
 
 ```
-docker compose down --rmi 'all'
+docker compose down --rmi all -v --remove-orphans
 docker compose -f zk-single-kafka-multiple.yml down --rmi all -v --remove-orphans
 ```
 
