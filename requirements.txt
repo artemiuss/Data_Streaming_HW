@@ -1,1 +1,4 @@
 kafka-python
+praw
+langdetect
+iso-639
