@@ -24,15 +24,15 @@ services:
     networks:
       - my-net
 
-  report:
-    container_name: report
+  reporter:
+    container_name: reporter
     build: .
-    image: report
+    image: reporter
     volumes:
       - type: bind
-        source: ./report.py
-        target: /app/report.py
-    command: [ "./report.py" ]
+        source: ./reporter.py
+        target: /app/reporter.py
+    command: [ "./reporter.py" ]
     networks:
       - my-net
     depends_on:
