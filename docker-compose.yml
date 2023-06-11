@@ -1,20 +1,16 @@
 services:
 
-  generator:
-    container_name: generator
+  producer:
+    container_name: producer
     build: .
-    image: generator
+    image: producer
     volumes:
       - type: bind
-        source: ./generator.py
-        target: /app/generator.py
-    command: [ "./generator.py" ]
-    #ports:
-    #  - "8080:8080"
+        source: ./producer.py
+        target: /app/producer.py
+    command: [ "./producer.py" , "tweets.csv"]
     networks:
       - my-net
-    depends_on:
-      - consumer
 
   consumer:
     container_name: consumer
@@ -25,8 +21,6 @@ services:
         source: ./consumer.py
         target: /app/consumer.py
     command: [ "./consumer.py" ]
-    #ports:
-    #  - "8080:8080"
     networks:
       - my-net
 
@@ -39,12 +33,10 @@ services:
         source: ./report.py
         target: /app/report.py
     command: [ "./report.py" ]
-    #ports:
-    #  - "8080:8080"
     networks:
       - my-net
     depends_on:
-      report:
+      consumer:
         condition: service_completed_successfully
 
 networks:
