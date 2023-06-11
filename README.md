@@ -12,24 +12,33 @@ Implementation:
 
 ## How to Run the Implementation
 
-### Preparation
+### Set up
+
 ```
 git clone https://github.com/conduktor/kafka-stack-docker-compose.git
-```
-
-### Set up
-```
 cd kafka-stack-docker-compose
 docker compose -f zk-single-kafka-multiple.yml up -d
 ```
 
 ### Usage notes
 
+Start
+```
+docker compose build
+docker compose up -d
+```
+
 ...
 
+Stop
+```
+docker compose down
+```
 
 ### Clean-Up
+
 ```
+docker compose down --rmi 'all'
 docker compose -f zk-single-kafka-multiple.yml down --rmi all -v --remove-orphans
 ```
 
