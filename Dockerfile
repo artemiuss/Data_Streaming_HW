@@ -1,4 +1,4 @@
-FROM python:3-slim-bullseye
+FROM python:3-slim-bullseye AS builder
 LABEL stage=builder
 WORKDIR /app
 COPY requirements.txt ./
