@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-import csv, json, time
+import os, csv, json, time
 from kafka import KafkaProducer
 
 def main():
-    filepath = 'reddit_ds.csv'
+    
+    DS_FILENAME = os.getenv("DS_FILENAME")
+    KAFKA_HOST = os.getenv("KAFKA_HOST")
+    KAFKA_PORT = os.getenv("KAFKA_PORT")
+    KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
 
-    producer = KafkaProducer(bootstrap_servers=["localhost:9092"])
+    producer = KafkaProducer(bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"])
 
-    with open(filepath, encoding="utf8", newline='') as csvfile:
+    with open(DS_FILENAME, encoding="utf8", newline='') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
         for row in reader:
             row['comment_ts'] = int(time.time())
             json_data = json.dumps(row).encode('utf-8')
-            producer.send(topic="reddit_ds", value=json_data)
+            producer.send(topic=KAFKA_TOPIC, value=json_data)
         producer.flush()
 
     producer.close()

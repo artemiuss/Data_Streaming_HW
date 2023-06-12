@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-import time, json
+import os, time, json
 from kafka import KafkaConsumer
 
 def main():
+
+    KAFKA_HOST = os.getenv("KAFKA_HOST")
+    KAFKA_PORT = os.getenv("KAFKA_PORT")
+    KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
+
     consumer = KafkaConsumer(
-                                'reddit_ds',
-                                bootstrap_servers=["localhost:9092"],
+                                KAFKA_TOPIC,
+                                bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"],
                                 auto_offset_reset='earliest',
                                 value_deserializer=lambda m: json.loads(m.decode('utf-8'))
                             )
