@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-import os, logging
+import sys, os, logging
 from kafka import KafkaProducer
 
 def main():
-    """
-    The Main
-    """
+    pass
 
 if __name__ == '__main__':
     main()

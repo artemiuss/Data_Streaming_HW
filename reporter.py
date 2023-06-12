@@ -2,9 +2,7 @@
 import os, logging
 
 def main():
-    """
-    The Main
-    """
+    pass
 
 if __name__ == '__main__':
     main()

@@ -3,9 +3,7 @@ import os, logging
 from kafka import KafkaConsumer
 
 def main():
-    """
-    The Main
-    """
+    pass
 
 if __name__ == '__main__':
     main()

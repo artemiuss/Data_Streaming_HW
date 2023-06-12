@@ -10,6 +10,14 @@ Implementation:
 - Consumer service
 - Reporting service
 
+## Reddit Dataset
+
+As dataset was used [1 million Reddit comments from 40 subreddits](https://www.kaggle.com/datasets/smagnan/1-million-reddit-comments-from-40-subreddits), from which the last two columns were removed by running the command `cut -d, -f1-2 kaggle_RC_2019-05.csv > reddit_ds.csv`.
+
+And thus, the working dataset `reddit_ds.csv` contains the following columns:
+- `subreddit (categorical)`: on which subreddit the comment was posted
+- `body (str)`: comment content
+
 ## How to Run the Implementation
 
 ### Set up
