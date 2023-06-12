@@ -8,7 +8,7 @@ services:
       - type: bind
         source: ./producer.py
         target: /app/producer.py
-    command: [ "./producer.py" , "tweets.csv"]
+    command: [ "./producer.py"]
     networks:
       - my-net
 

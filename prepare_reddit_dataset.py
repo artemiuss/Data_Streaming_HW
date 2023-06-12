@@ -52,9 +52,6 @@ def main():
             #else:
             #    print("Neutral sentiment")
 
-            # Save to CSV
-            # subreddit, body
-
         except Exception as e:
             pass
 
