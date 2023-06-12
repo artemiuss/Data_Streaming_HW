@@ -5,7 +5,7 @@ from kafka import KafkaProducer
 def main():
     filepath = 'reddit_ds.csv'
 
-    producer = KafkaProducer(bootstrap_servers=["kafka1:9092"])
+    producer = KafkaProducer(bootstrap_servers=["localhost:9092"])
 
     with open(filepath, encoding="utf8") as file:
         reader = csv.DictReader(file)

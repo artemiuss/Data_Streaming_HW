@@ -25,7 +25,7 @@ And thus, the working dataset `reddit_ds.csv` contains the following columns:
 ```
 git clone https://github.com/conduktor/kafka-stack-docker-compose.git
 cd kafka-stack-docker-compose
-docker compose -f zk-single-kafka-multiple.yml up -d
+docker compose -f full-stack.yml up -d
 ```
 
 ### Usage notes
@@ -47,7 +47,7 @@ docker compose down
 
 ```
 docker compose down --rmi all -v --remove-orphans
-docker compose -f zk-single-kafka-multiple.yml down --rmi all -v --remove-orphans
+docker compose -f full-stack.yml down --rmi all -v --remove-orphans
 ```
 
 ## Graphs of the throughput/max latency versus configuration
