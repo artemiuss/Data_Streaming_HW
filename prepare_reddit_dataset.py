@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import praw, random
+import praw, random, csv
 from langdetect import detect
 from iso639 import languages
 from multi_rake import Rake
@@ -27,7 +27,7 @@ def main():
             comments_list = list(comments)
             random_comment = random.choice(comments_list)
             #print(random_comment)
-            print(random_comment.body)
+            #print(f"{random_comment.subreddit.display_name}, {random_comment.body}, {random_comment.author}, {random_comment.created}")
             #print(random_comment.controversiality)
             #print(random_comment.score)
             #print(random_comment.polarity)
@@ -52,6 +52,12 @@ def main():
             #    print("Negative sentiment")
             #else:
             #    print("Neutral sentiment")
+
+            data = [random_comment.subreddit.display_name, random_comment.body, random_comment.author, random_comment.created]
+
+            with open('reddit_ds_new.csv', 'a', newline='') as file:
+                writer = csv.writer(file, quoting=csv.QUOTE_ALL)
+                writer.writerow(data)
 
         except Exception as e:
             pass

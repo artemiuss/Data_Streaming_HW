@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
 import os, csv, json, time
 from kafka import KafkaProducer
+from dotenv import load_dotenv
 
 def main():
+    load_dotenv()
     
     DS_FILENAME = os.getenv("DS_FILENAME")
     KAFKA_HOST = os.getenv("KAFKA_HOST")
     KAFKA_PORT = os.getenv("KAFKA_PORT")
     KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
 
-    producer = KafkaProducer(bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"])
+    print(f"DS_FILENAME: {DS_FILENAME}")
+    print(f"KAFKA_HOST: {KAFKA_HOST}")
+    print(f"KAFKA_PORT: {KAFKA_PORT}")
+    print(f"KAFKA_TOPIC: {KAFKA_TOPIC}")
+
+    #producer = KafkaProducer(bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"])
+    producer = KafkaProducer(bootstrap_servers=["kafka1:19092"])
 
     with open(DS_FILENAME, encoding="utf8", newline='') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
