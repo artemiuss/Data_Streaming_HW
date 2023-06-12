@@ -17,13 +17,7 @@ def main():
             #row['producer_timestamp'] = int(time.time() * 1000)
             
             producer.send(topic="reddit_ds", value=json_data)
-import os, logging
-from kafka import KafkaProducer
-
-def main():
-    """
-    The Main
-    """
-
+            #producer.flush()
+            
 if __name__ == '__main__':
     main()
