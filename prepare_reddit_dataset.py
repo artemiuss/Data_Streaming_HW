@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import praw, random, csv
+import praw, random, csv, os
 from langdetect import detect
 from iso639 import languages
 from multi_rake import Rake
@@ -7,6 +7,8 @@ import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 def main():
+    filename = 'reddit_ds_new.csv'
+
     reddit = praw.Reddit(
         client_id = "akSgjjdnVqB57EIDMMvSTw",
         client_secret = "pBMc9cndlNkmJqyDWyTyXGaJXwcsTQ",
@@ -54,9 +56,14 @@ def main():
             #    print("Neutral sentiment")
 
             data = [random_comment.subreddit.display_name, random_comment.body, random_comment.author, random_comment.created]
-
-            with open('reddit_ds_new.csv', 'a', newline='') as file:
-                writer = csv.writer(file, quoting=csv.QUOTE_ALL)
+            headers = ['subreddit', 'body', 'author', 'created']
+            
+            with open(filename, 'a', newline='') as file:
+                file_is_empty = os.stat(filename).st_size == 0
+                writer = csv.writer(file, lineterminator='\n')
+                if file_is_empty:
+                    writer.writerow(headers)
+                writer = csv.writer(file, quoting=csv.QUOTE_MINIMAL)
                 writer.writerow(data)
 
         except Exception as e:
