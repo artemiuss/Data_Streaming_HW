@@ -1,12 +1,12 @@
 # Data Streaming Homework - Investigation of the Apache Kafka throughput
 
 Goals:
-- Learn about implementation of  dummy distributed application that uses kafka for communication between components
+- Learn about implementation of dummy distributed application that uses kafka for communication between components
 - Investigate throughput of a kafka-based solution considering different number of producers, consumers, partitions and replicas
 
 Implementation:
-- Single Zookeeper instance and three Kafka brokers
-- Produced service
+- Kafka environment
+- Producer service
 - Consumer service
 - Reporting service
 
