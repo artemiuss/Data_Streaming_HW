@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import csv, json
+import csv, json, time
 from kafka import KafkaProducer
 
 def main():
@@ -7,14 +7,12 @@ def main():
 
     producer = KafkaProducer(bootstrap_servers=["localhost:9092"])
 
-    with open(filepath, encoding="utf8") as file:
-        reader = csv.DictReader(file)
+
+    with open(filepath, encoding="utf8", newline='') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
         for row in reader:
-            #print(row)
+            row['comment_ts'] = int(time.time())
             json_data = json.dumps(row).encode('utf-8')
-            #print(json_data)
-            #row['producer_timestamp'] = int(time.time() * 1000)
-            
             producer.send(topic="reddit_ds", value=json_data)
         producer.flush()
     producer.close()
