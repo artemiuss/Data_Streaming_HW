@@ -51,7 +51,7 @@ docker compose -f full-stack.yml down --rmi all -v --remove-orphans
 ```
 
 ## Graphs of the throughput/max latency versus configuration
-throughput/
+
 1. One producer, a topic with one partition, one consumer
     ![Max Latency](graphs/1_latency.png)
     ![Throughput](graphs/1_throughput.png)

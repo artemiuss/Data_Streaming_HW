@@ -12,37 +12,5 @@ services:
         source: ./reddit_ds.csv
         target: /app/reddit_ds.csv
     command: [ "./producer.py"]
-    networks:
-      - my-network
 
-  consumer:
-    container_name: consumer
-    build: .
-    image: consumer
-    volumes:
-      - type: bind
-        source: ./consumer.py
-        target: /app/consumer.py
-    command: [ "./consumer.py" ]
-    networks:
-      - my-network
-
-  reporter:
-    container_name: reporter
-    build: .
-    image: reporter
-    volumes:
-      - type: bind
-        source: ./reporter.py
-        target: /app/reporter.py
-    command: [ "./reporter.py" ]
-    networks:
-      - my-network
-    depends_on:
-      consumer:
-        condition: service_completed_successfully
-
-networks:
-  my-network:
-  
 

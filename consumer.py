@@ -5,10 +5,14 @@ from dotenv import load_dotenv
 
 def main():
     load_dotenv()
-    
+
     KAFKA_HOST = os.getenv("KAFKA_HOST")
     KAFKA_PORT = os.getenv("KAFKA_PORT")
     KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
+
+    print(f"KAFKA_HOST: {KAFKA_HOST}")
+    print(f"KAFKA_PORT: {KAFKA_PORT}")
+    print(f"KAFKA_TOPIC: {KAFKA_TOPIC}")
 
     consumer = KafkaConsumer(
                                 KAFKA_TOPIC,
