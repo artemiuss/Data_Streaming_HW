@@ -21,8 +21,7 @@ def main():
     with open(DS_FILENAME, encoding="utf8", newline='') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
         for row in reader:
-            row['created'] = int(time.time())
-            #row['created'] = int(float(row['created']))
+            row['created'] = int(float(row['created']))
             json_data = json.dumps(row).encode('utf-8')
             print(json_data)
             producer.send(topic=KAFKA_TOPIC, value=json_data)
