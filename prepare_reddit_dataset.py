@@ -7,7 +7,7 @@ import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 def main():
-    filename = 'reddit_ds_new.csv'
+    filename = 'reddit_ds.csv'
 
     reddit = praw.Reddit(
         client_id = "akSgjjdnVqB57EIDMMvSTw",
