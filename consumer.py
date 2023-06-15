@@ -27,7 +27,8 @@ def main():
     consumer = KafkaConsumer(
                                 KAFKA_TOPIC,
                                 bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"],
-                                auto_offset_reset='earliest',
+                                auto_offset_reset='earliest', # consume earliest available messages, don't commit offsets
+                                consumer_timeout_ms=1000, # StopIteration if no message after 1sec
                                 value_deserializer=lambda m: json.loads(m.decode('utf-8'))
                             )
     for message in consumer:
