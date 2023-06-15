@@ -12,6 +12,8 @@ services:
         source: ./reddit_ds.csv
         target: /app/reddit_ds.csv
     command: [ "./producer.py"]
+    depends_on:
+      postgres:
     networks:
       - kafka-stack-docker-compose_default
 
@@ -24,6 +26,8 @@ services:
         source: ./consumer.py
         target: /app/consumer.py
     command: [ "./consumer.py" ]
+    depends_on:
+      postgres:
     networks:
       - kafka-stack-docker-compose_default
 
@@ -37,8 +41,29 @@ services:
         target: /app/reporter.py
     command: [ "./reporter.py" ]
     depends_on:
+      postgres:
       consumer:
         condition: service_completed_successfully
+    networks:
+      - kafka-stack-docker-compose_default
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:15
+    environment:
+      POSTGRES_USER: kafka_test
+      POSTGRES_PASSWORD: kafka_test
+      POSTGRES_DB: kafka_test
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kafka_test"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    ports:
+      - "5433:5432"
     networks:
       - kafka-stack-docker-compose_default
 

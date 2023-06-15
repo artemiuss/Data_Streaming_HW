@@ -5,4 +5,5 @@ iso-639
 nltk
 multi_rake
 python-dotenv
+psycopg2
 
