@@ -6,4 +6,5 @@ nltk
 multi_rake
 python-dotenv
 psycopg2
+matplotlib
 

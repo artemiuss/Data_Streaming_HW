@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import sys, os, time, json, datetime, psycopg2
 from kafka import KafkaConsumer
+from kafka.admin import KafkaAdminClient
+from kafka.errors import UnknownTopicOrPartitionError
 from dotenv import load_dotenv
 
 def main():
@@ -34,7 +36,7 @@ def main():
         time.sleep(1)
         message_created = int(message.value['created'])
         processed = int(datetime.datetime.utcnow().timestamp()*1e3)
-        latency = processed - message_created
+        latency = (processed - message_created)/1000
         size = sys.getsizeof(json.dumps(message.value))
         cur.execute("INSERT INTO kafka_throughput_metrics (message_created, latency, size) VALUES (%s, %s, %s)"
                     ,(message_created, latency, size))

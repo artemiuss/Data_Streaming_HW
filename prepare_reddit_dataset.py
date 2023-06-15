@@ -9,6 +9,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 def main():
     filename = 'reddit_ds.csv'
 
+    # https://redditclient.readthedocs.io/en/latest/oauth/
     reddit = praw.Reddit(
         client_id = "akSgjjdnVqB57EIDMMvSTw",
         client_secret = "pBMc9cndlNkmJqyDWyTyXGaJXwcsTQ",

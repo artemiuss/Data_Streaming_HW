@@ -1,5 +1,17 @@
 services:
 
+  init_kafka:
+    container_name: init_kafka
+    build: .
+    image: producer
+    volumes:
+      - type: bind
+        source: ./init_kafka.py
+        target: /app/init_kafka.py
+    command: [ "./init_kafka.py"]
+    networks:
+      - kafka-stack-docker-compose_default
+
   producer:
     container_name: producer
     build: .
@@ -28,6 +40,7 @@ services:
     command: [ "./consumer.py" ]
     depends_on:
       - postgres
+      - init_kafka
     networks:
       - kafka-stack-docker-compose_default
 
