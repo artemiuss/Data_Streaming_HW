@@ -10,22 +10,18 @@ def main():
     KAFKA_PORT = os.getenv("KAFKA_PORT")
     KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
 
-    pg_conn = psycopg2.connect(user="kafka_test", password="kafka_test", database="kafka_test", host="postgres", port=5433)
+    pg_conn = psycopg2.connect(user="kafka_test", password="kafka_test", database="kafka_test", host="postgres", port=5432)
     cur = pg_conn.cursor()
     
-    query = """DROP TABLE IF EXISTS kafka_throughput_metrics"""
-    cur.execute(query)
-    
-    query = """CREATE TABLE kafka_throughput_metrics (
-                id SERIAL,
-                message_created INT UNSIGNED NOT NULL,
-                latency INT UNSIGNED NOT NULL,
-                size INT UNSIGNED NOT NULL,
-                PRIMARY KEY (id))"""
-    cur.execute(query)
-    
-    query = "INSERT INTO kafka_throughput_metrics (message_created, latency, size) VALUES ($1, $2, $3)"
-    
+    cur.execute("DROP TABLE IF EXISTS kafka_throughput_metrics")
+    cur.execute("""CREATE TABLE kafka_throughput_metrics (
+                    id SERIAL,
+                    message_created BIGINT NOT NULL,
+                    latency DECIMAL NOT NULL,
+                    size BIGINT NOT NULL,
+                    PRIMARY KEY (id))""")
+    pg_conn.commit()
+
     consumer = KafkaConsumer(
                                 KAFKA_TOPIC,
                                 bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"],
@@ -34,13 +30,14 @@ def main():
                             )
     for message in consumer:
         print (f"partition={message.partition}, offset={message.offset}, key={message.key}, timestamp={message.timestamp}")
-        print (f"value={message.value}")
+        #print (f"value={message.value}")
         time.sleep(1)
-        message_created = message.value['created']
+        message_created = int(message.value['created'])
         processed = int(datetime.datetime.utcnow().timestamp()*1e3)
-        latency = processed - message.timestamp
-        size = sys.getsizeof(message.value)
-        cur.execute(query, message_created, latency, size)
+        latency = processed - message_created
+        size = sys.getsizeof(json.dumps(message.value))
+        cur.execute("INSERT INTO kafka_throughput_metrics (message_created, latency, size) VALUES (%s, %s, %s)"
+                    ,(message_created, latency, size))
         pg_conn.commit()
 
     consumer.close()

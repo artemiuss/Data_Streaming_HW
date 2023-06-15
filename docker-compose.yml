@@ -13,7 +13,7 @@ services:
         target: /app/reddit_ds.csv
     command: [ "./producer.py"]
     depends_on:
-      - postgres
+      - consumer
     networks:
       - kafka-stack-docker-compose_default
 
