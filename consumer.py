@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, time, json, datetime, psycopg2
+import sys, os, time, json, datetime, psycopg2
 from kafka import KafkaConsumer
 from dotenv import load_dotenv
 
@@ -12,15 +12,19 @@ def main():
 
     pg_conn = psycopg2.connect(user="kafka_test", password="kafka_test", database="kafka_test", host="postgres", port=5433)
     cur = pg_conn.cursor()
-    query = """CREATE TABLE IF NOT EXISTS kafka_throughput_metrics (
+    
+    query = """DROP TABLE IF EXISTS kafka_throughput_metrics"""
+    cur.execute(query)
+    
+    query = """CREATE TABLE kafka_throughput_metrics (
                 id SERIAL,
                 message_created INT UNSIGNED NOT NULL,
                 latency INT UNSIGNED NOT NULL,
+                size INT UNSIGNED NOT NULL,
                 PRIMARY KEY (id))"""
     cur.execute(query)
     
-    query = """INSERT INTO kafka_throughput_metrics (...)
-                VALUES ($1, $2, $3, $4)"""
+    query = "INSERT INTO kafka_throughput_metrics (message_created, latency, size) VALUES ($1, $2, $3)"
     
     consumer = KafkaConsumer(
                                 KAFKA_TOPIC,
@@ -35,7 +39,8 @@ def main():
         message_created = message.value['created']
         processed = int(datetime.datetime.utcnow().timestamp()*1e3)
         latency = processed - message.timestamp
-        cur.execute(query, message_created, latency)
+        size = sys.getsizeof(message.value)
+        cur.execute(query, message_created, latency, size)
         pg_conn.commit()
 
     consumer.close()
