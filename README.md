@@ -22,27 +22,22 @@ And thus, the working dataset `reddit_ds.csv` contains the following columns:
 
 ### Usage notes
 
-Start
+Set up and start
 ```
 git clone https://github.com/conduktor/kafka-stack-docker-compose.git
 cd kafka-stack-docker-compose
 docker compose -f full-stack.yml up -d
 cd ..
+git clone https://github.com/artemiuss/kafka_throughput_investigation.git
+cd kafka_throughput_investigation
 docker compose build
 docker compose up -d
 ```
 
-...
-
-Stop
-```
-docker compose down
-```
-
-### Clean-Up
-
+Stop and clean-up
 ```
 docker compose down --rmi all -v --remove-orphans
+cd ../kafka-stack-docker-compose
 docker compose -f full-stack.yml down --rmi all -v --remove-orphans
 ```
 
