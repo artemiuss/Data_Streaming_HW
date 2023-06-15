@@ -20,18 +20,14 @@ And thus, the working dataset `reddit_ds.csv` contains the following columns:
 
 ## How to Run the Implementation
 
-### Set up
-
-```
-git clone https://github.com/conduktor/kafka-stack-docker-compose.git
-cd kafka-stack-docker-compose
-docker compose -f full-stack.yml up -d
-```
-
 ### Usage notes
 
 Start
 ```
+git clone https://github.com/conduktor/kafka-stack-docker-compose.git
+cd kafka-stack-docker-compose
+docker compose -f full-stack.yml up -d
+cd ..
 docker compose build
 docker compose up -d
 ```
