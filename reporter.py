@@ -53,32 +53,24 @@ def main():
 
     rows = cur.fetchall()
     
-    time_sec = rows[1]
-    max_latency_sec = rows[2]
-    throughput_mbps = rows[3]
+    time_sec = [r[1] for r in rows]
+    max_latency_sec = [r[2] for r in rows]
+    throughput_mbps = [r[3] for r in rows]
 
     cur.close()
     pg_conn.close()
 
-    # Plotting the data
+    plt.subplot(2, 1, 1)
     plt.plot(time_sec, max_latency_sec)
-    
-    # Adding labels and title
-    plt.xlabel('Time, sec')
     plt.ylabel('Latency, sec')
-    plt.title('Latency')
-    # Save the plot
-    plt.savefig(f"report_output/{cur_date}_latency.png")
+    plt.title('Latency and Throughput')
 
-    # Plotting the data
+    plt.subplot(2, 1, 2)
     plt.plot(time_sec, throughput_mbps)
-
-    # Adding labels and title
-    plt.xlabel('Time, sec')
     plt.ylabel('Throughput, Mbps')
-    plt.title('Throughput')
-    # Save the plot
-    plt.savefig(f"report_output/{cur_date}_throughput.png")
+    plt.xlabel('Time, sec')
+    
+    plt.savefig(f"report_output/{cur_date}.png")
 
 if __name__ == '__main__':
     main()
