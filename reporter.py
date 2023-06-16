@@ -20,8 +20,8 @@ def main():
     print(f"Max latency: {row[1]} sec")
     print(f"Throughput: {row[2]} Mbps")
 
-    with open('report.txt', 'a', newline='') as file:
-        file.write(f"{datetime.now().strftime('%Y.%m.%d %H:%M:%S')} Total time: {row[0]} sec, Max latency: {row[0]} sec, Throughput: {row[1]} Mbps\n")
+    #with open('report.txt', 'a', newline='') as file:
+    #    file.write(f"{datetime.now().strftime('%Y.%m.%d %H:%M:%S')} Total time: {row[0]} sec, Max latency: {row[0]} sec, Throughput: {row[1]} Mbps\n")
 
 if __name__ == '__main__':
     main()
