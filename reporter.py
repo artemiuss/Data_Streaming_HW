@@ -4,22 +4,6 @@ from datetime import datetime
 from matplotlib import pyplot as plt
 from dotenv import load_dotenv
 
-def plot_latency(latency):
-    plt.plot(latency)
-    plt.ylabel('Latency in seconds')
-    plt.xlabel('Time in seconds')
-    plt.show()
-
-def plot_throughput(throughput):
-    plt.plot(throughput)
-    plt.ylabel('Mbps')
-    plt.xlabel('Time in seconds')
-    plt.show()
-
-def plot(mbps, latencies):
-    plot_latency(latencies)
-    plot_throughput(mbps)
-
 def main():
     load_dotenv()
 
@@ -38,15 +22,63 @@ def main():
                    FROM kafka_throughput_metrics""")
 
     row = cur.fetchone()
-    cur.close()
-    pg_conn.close()
 
     print(f"Total time: {row[0]} sec")
     print(f"Max latency: {row[1]} sec")
     print(f"Throughput: {row[2]} Mbps")
 
-    with open('report_output/report.txt', 'a', newline='') as file:
-        file.write(f"{datetime.now().strftime('%Y.%m.%d %H:%M:%S')} Total time: {row[0]} sec, Max latency: {row[0]} sec, Throughput: {row[1]} Mbps\n")
+    cur_date = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
+
+    with open(f"report_output/{cur_date}_report.txt", 'a', newline='') as file:
+        file.write(f"Total time: {row[0]} sec, Max latency: {row[0]} sec, Throughput: {row[1]} Mbps\n")
+
+    cur.execute("""WITH t AS (
+                   SELECT id, 
+                   (MAX(processed - created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0 AS max_latency_sec,
+                   (MAX(processed) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)- MIN(created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0 AS total_time_sec,
+                   (SUM(size) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1024.0/1024.0*8
+                   /((MAX(processed - created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0) AS throughput_mbps
+                   FROM kafka_throughput_metrics)
+                   ,stats AS (
+                   SELECT MIN(total_time_sec) AS time_min, MAX(total_time_sec) AS time_max
+                   FROM t)
+                   SELECT
+                   width_bucket(total_time_sec, time_min, time_max + 1, 10) AS bucket,
+                   ROUND(MAX(total_time_sec),-1) time_sec,
+                   ROUND(MAX(max_latency_sec),-1) AS max_latency_sec,
+                   ROUND(MAX(throughput_mbps),1) AS throughput_mbps
+                   FROM t, stats
+                   GROUP BY bucket
+                   ORDER BY bucket""")
+
+    rows = cur.fetchall()
+    
+    time_sec = rows[1]
+    max_latency_sec = rows[2]
+    throughput_mbps = rows[3]
+
+    cur.close()
+    pg_conn.close()
+
+    # Plotting the data
+    plt.plot(time_sec, max_latency_sec)
+    
+    # Adding labels and title
+    plt.xlabel('Time, sec')
+    plt.ylabel('Latency, sec')
+    plt.title('Latency')
+    # Save the plot
+    plt.savefig(f"report_output/{cur_date}_latency.png")
+
+    # Plotting the data
+    plt.plot(time_sec, throughput_mbps)
+
+    # Adding labels and title
+    plt.xlabel('Time, sec')
+    plt.ylabel('Throughput, Mbps')
+    plt.title('Throughput')
+    # Save the plot
+    plt.savefig(f"report_output/{cur_date}_throughput.png")
 
 if __name__ == '__main__':
     main()
