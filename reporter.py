@@ -1,9 +1,35 @@
 #!/usr/bin/env python3
-import psycopg2
+import os, psycopg2
 from datetime import datetime
+from matplotlib import pyplot as plt
+from dotenv import load_dotenv
+
+def plot_latency(latency):
+    plt.plot(latency)
+    plt.ylabel('Latency in seconds')
+    plt.xlabel('Time in seconds')
+    plt.show()
+
+def plot_throughput(throughput):
+    plt.plot(throughput)
+    plt.ylabel('Mbps')
+    plt.xlabel('Time in seconds')
+    plt.show()
+
+def plot(mbps, latencies):
+    plot_latency(latencies)
+    plot_throughput(mbps)
 
 def main():
-    pg_conn = psycopg2.connect(user="kafka_test", password="kafka_test", database="kafka_test", host="postgres", port=5432)
+    load_dotenv()
+    
+    PG_USER = os.getenv("PG_USER")
+    PG_PASSWORD = os.getenv("PG_PASSWORD")
+    PG_DATABASE = os.getenv("PG_DATABASE")
+    PG_HOST = os.getenv("PG_HOST")
+    PG_PORT = os.getenv("PG_PORT")
+
+    pg_conn = psycopg2.connect(user=PG_USER, password=PG_PASSWORD, database=PG_DATABASE, host=PG_HOST, port=PG_PORT)
     cur = pg_conn.cursor()
 
     cur.execute("""SELECT (MAX(processed) - MIN(created))/1000.0 AS total_time_sec,

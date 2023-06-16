@@ -5,6 +5,8 @@ COPY requirements.txt .env ./
 RUN pip install --root-user-action=ignore --no-cache-dir --user -r requirements.txt
 RUN sed -i '/^KAFKA_HOST=/s/=.*/="kafka1"/' .env
 RUN sed -i '/^KAFKA_PORT=/s/=.*/="19092"/' .env
+RUN sed -i '/^PG_HOST=/s/=.*/="postgres"/' .env
+RUN sed -i '/^PG_PORT=/s/=.*/="5432"/' .env
 
 FROM python:3
 WORKDIR /app

@@ -12,7 +12,13 @@ def main():
     KAFKA_PORT = os.getenv("KAFKA_PORT")
     KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
 
-    pg_conn = psycopg2.connect(user="kafka_test", password="kafka_test", database="kafka_test", host="postgres", port=5432)
+    PG_USER = os.getenv("PG_USER")
+    PG_PASSWORD = os.getenv("PG_PASSWORD")
+    PG_DATABASE = os.getenv("PG_DATABASE")
+    PG_HOST = os.getenv("PG_HOST")
+    PG_PORT = os.getenv("PG_PORT")
+
+    pg_conn = psycopg2.connect(user=PG_USER, password=PG_PASSWORD, database=PG_DATABASE, host=PG_HOST, port=PG_PORT)
     cur = pg_conn.cursor()
     
     cur.execute("DROP TABLE IF EXISTS kafka_throughput_metrics")
