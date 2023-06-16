@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import sys, os, time, json, datetime, psycopg2
 from kafka import KafkaConsumer
-from kafka.admin import KafkaAdminClient
-from kafka.errors import UnknownTopicOrPartitionError
 from dotenv import load_dotenv
 
 def main():

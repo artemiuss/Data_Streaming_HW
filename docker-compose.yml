@@ -53,8 +53,8 @@ services:
         source: ./reporter.py
         target: /app/reporter.py
       - type: bind
-        source: ./report.txt
-        target: /app/report.txt
+        source: ./report_output
+        target: /app/report_output
     command: [ "./reporter.py" ]
     depends_on:
       consumer:

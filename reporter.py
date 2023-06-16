@@ -22,7 +22,7 @@ def plot(mbps, latencies):
 
 def main():
     load_dotenv()
-    
+
     PG_USER = os.getenv("PG_USER")
     PG_PASSWORD = os.getenv("PG_PASSWORD")
     PG_DATABASE = os.getenv("PG_DATABASE")
@@ -32,11 +32,10 @@ def main():
     pg_conn = psycopg2.connect(user=PG_USER, password=PG_PASSWORD, database=PG_DATABASE, host=PG_HOST, port=PG_PORT)
     cur = pg_conn.cursor()
 
-    cur.execute("""SELECT (MAX(processed) - MIN(created))/1000.0 AS total_time_sec,
-                   MAX(processed - created)/1000.0 AS max_latency_sec,
+    cur.execute("""SELECT ROUND((MAX(processed) - MIN(created))/1000.0,2) AS total_time_sec,
+                   ROUND(MAX(processed - created)/1000.0,2) AS max_latency_sec,
                    ROUND(SUM(size/1024.0/1024.0)*8/((MAX(processed) - MIN(created))/1000.0),2) AS throughput_mbps
-                   FROM kafka_throughput_metrics
-                """)
+                   FROM kafka_throughput_metrics""")
 
     row = cur.fetchone()
     cur.close()
@@ -46,8 +45,8 @@ def main():
     print(f"Max latency: {row[1]} sec")
     print(f"Throughput: {row[2]} Mbps")
 
-    #with open('report.txt', 'a', newline='') as file:
-    #    file.write(f"{datetime.now().strftime('%Y.%m.%d %H:%M:%S')} Total time: {row[0]} sec, Max latency: {row[0]} sec, Throughput: {row[1]} Mbps\n")
+    with open('report_output/report.txt', 'a', newline='') as file:
+        file.write(f"{datetime.now().strftime('%Y.%m.%d %H:%M:%S')} Total time: {row[0]} sec, Max latency: {row[0]} sec, Throughput: {row[1]} Mbps\n")
 
 if __name__ == '__main__':
     main()
