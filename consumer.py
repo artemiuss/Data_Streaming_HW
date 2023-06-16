@@ -18,8 +18,8 @@ def main():
     cur.execute("DROP TABLE IF EXISTS kafka_throughput_metrics")
     cur.execute("""CREATE TABLE kafka_throughput_metrics (
                     id SERIAL,
-                    message_created BIGINT NOT NULL,
-                    latency DECIMAL NOT NULL,
+                    created BIGINT NOT NULL,
+                    processed BIGINT NOT NULL,
                     size BIGINT NOT NULL,
                     PRIMARY KEY (id))""")
     pg_conn.commit()
@@ -34,13 +34,12 @@ def main():
     for message in consumer:
         print (f"partition={message.partition}, offset={message.offset}, key={message.key}, timestamp={message.timestamp}")
         #print (f"value={message.value}")
-        time.sleep(1)
-        message_created = int(message.value['created'])
+        #time.sleep(1)
+        created = int(message.value['created'])
         processed = int(datetime.datetime.utcnow().timestamp()*1e3)
-        latency = (processed - message_created)/1000
         size = sys.getsizeof(json.dumps(message.value))
-        cur.execute("INSERT INTO kafka_throughput_metrics (message_created, latency, size) VALUES (%s, %s, %s)"
-                    ,(message_created, latency, size))
+        cur.execute("INSERT INTO kafka_throughput_metrics (created, processed, size) VALUES (%s, %s, %s)"
+                    ,(created, processed, size))
         pg_conn.commit()
 
     consumer.close()

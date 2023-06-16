@@ -3,13 +3,14 @@ import psycopg2
 from datetime import datetime
 
 def main():
-    pg_conn = psycopg2.connect(user="kafka_test", password="kafka_test", database="kafka_test", host="localhost", port=5433)
+    pg_conn = psycopg2.connect(user="kafka_test", password="kafka_test", database="kafka_test", host="postgres", port=5432)
     cur = pg_conn.cursor()
 
-    cur.execute("""SELECT ROUND((MAX(message_created) - MIN(message_created))/1000) AS total_time_sec,
-                   ROUND(MAX(latency),2) AS max_latency_sec,
-                   ROUND(((MAX(message_created) - MIN(message_created))/1000)/(SUM(size)/1024/1024),2) AS throughput_mbps
-                   FROM kafka_throughput_metrics""")
+    cur.execute("""SELECT (MAX(processed) - MIN(created))/1000.0 AS total_time_sec,
+                   MAX(processed - created)/1000.0 AS max_latency_sec,
+                   ROUND(SUM(size/1024.0/1024.0)*8/((MAX(processed) - MIN(created))/1000.0),2) AS throughput_mbps
+                   FROM kafka_throughput_metrics
+                """)
 
     row = cur.fetchone()
     cur.close()
