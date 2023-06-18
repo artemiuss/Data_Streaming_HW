@@ -86,10 +86,6 @@ def main():
     plt.ylabel('Throughput, Mbps')
     plt.xlabel('Test #')
     
-
-
-
-
     plt.savefig(f"report_output/final_report.png")
     
 if __name__ == '__main__':

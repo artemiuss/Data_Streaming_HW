@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, csv, json, datetime
+import os, csv, json, datetime, multiprocessing
 from kafka import KafkaProducer
 from dotenv import load_dotenv
 

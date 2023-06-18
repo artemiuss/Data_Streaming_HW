@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, os, time, json, datetime, psycopg2
+import sys, os, time, json, datetime, psycopg2, multiprocessing
 from kafka import KafkaConsumer
 from dotenv import load_dotenv
 import subprocess
