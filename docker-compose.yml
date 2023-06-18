@@ -25,6 +25,12 @@ services:
       - type: bind
         source: ./reddit_ds.csv
         target: /app/reddit_ds.csv
+      - type: bind
+        source: ./reddit_ds_part_1.csv
+        target: /app/reddit_ds_part_1.csv
+      - type: bind
+        source: ./reddit_ds_part_2.csv
+        target: /app/reddit_ds_part_2.csv
     command: [ "./producer.py"]
     depends_on:
       - consumer

@@ -39,6 +39,7 @@ def main():
     elif PRODUCERS > 1:
         filename = os.path.splitext(DS_FILENAME)[0]
         extension = os.path.splitext(DS_FILENAME)[1]
+
         processes = []
         for i in range(1,PRODUCERS):
             p = multiprocessing.Process(target=produce, args=(f"{filename}_part_{i}{extension}", KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC,))
