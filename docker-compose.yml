@@ -28,6 +28,10 @@ services:
       - consumer
     networks:
       - kafka-stack-docker-compose_default
+    environment:
+      PRODUCERS: ${PRODUCERS}
+      PARTITIONS: ${PARTITIONS}
+      CONSUMERS: ${CONSUMERS}
 
   consumer:
     container_name: consumer
@@ -43,6 +47,10 @@ services:
       - init_kafka
     networks:
       - kafka-stack-docker-compose_default
+    environment:
+      PRODUCERS: ${PRODUCERS}
+      PARTITIONS: ${PARTITIONS}
+      CONSUMERS: ${CONSUMERS}
 
   reporter:
     container_name: reporter
@@ -61,6 +69,10 @@ services:
         condition: service_completed_successfully
     networks:
       - kafka-stack-docker-compose_default
+    environment:
+      PRODUCERS: ${PRODUCERS}
+      PARTITIONS: ${PARTITIONS}
+      CONSUMERS: ${CONSUMERS}
 
   postgres:
     container_name: postgres
