@@ -1,5 +1,4 @@
 kafka-stack-docker-compose/
-report_output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
