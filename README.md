@@ -68,5 +68,14 @@ docker compose -f full-stack.yml down --rmi all -v --remove-orphans
 
 ![Kafka Metrics](report_output/final_report.png)
 
+Legend:
+1 - One producer, a topic with one partition, one consumer
+2 - One producer, a topic with one partition, 2 consumers
+3 - One producer, a topic with 2 partitions, 2 consumers
+4 - One producer, a topic with 5 partitions, 5 consumers
+5 - One producer, a topic with 10 partitions, 1 consumers
+6 - One producer, a topic with 10 partitions, 5 consumers
+7 - One producer, a topic with 10 partitions, 10 consumers
+8 - 2 producers (input data should be split into 2 parts somehow), a topic with 10 partitions, 10 consumers
 
 
