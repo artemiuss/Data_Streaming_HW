@@ -11,6 +11,14 @@ def main():
     KAFKA_PORT = os.getenv("KAFKA_PORT")
     KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
 
+    PRODUCERS = os.getenv("PRODUCERS")
+    PARTITIONS = os.getenv("PARTITIONS")
+    CONSUMERS = os.getenv("CONSUMERS")
+    
+    PRODUCERS = 1 if PRODUCERS is None else int(PRODUCERS)
+    PARTITIONS = 1 if PARTITIONS is None else int(PARTITIONS)
+    CONSUMERS = 1 if CONSUMERS is None else int(CONSUMERS)
+
     producer = KafkaProducer(bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"])
 
     with open(DS_FILENAME, encoding="utf8", newline='') as csvfile:

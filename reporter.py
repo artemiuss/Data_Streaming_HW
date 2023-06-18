@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 import os, psycopg2
-from datetime import datetime
 from matplotlib import pyplot as plt
 from dotenv import load_dotenv
 
 def main():
     load_dotenv()
+
+    PRODUCERS = os.getenv("PRODUCERS")
+    PARTITIONS = os.getenv("PARTITIONS")
+    CONSUMERS = os.getenv("CONSUMERS")
+
+    PRODUCERS = 1 if PRODUCERS is None else int(PRODUCERS)
+    PARTITIONS = 1 if PARTITIONS is None else int(PARTITIONS)
+    CONSUMERS = 1 if CONSUMERS is None else int(CONSUMERS)
+
+    report_file_name = f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}"
 
     PG_USER = os.getenv("PG_USER")
     PG_PASSWORD = os.getenv("PG_PASSWORD")
@@ -27,10 +36,9 @@ def main():
     print(f"Max latency: {row[1]} sec")
     print(f"Throughput: {row[2]} Mbps")
 
-    cur_date = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
-
-    with open(f"report_output/{cur_date}_report.txt", 'a', newline='') as file:
-        file.write(f"Total time: {row[0]} sec, Max latency: {row[0]} sec, Throughput: {row[1]} Mbps\n")
+    with open(f"report_output/{report_file_name}.csv", 'a', newline='') as file:
+        file.write(f"total time, max latency, throughput\n")
+        file.write(f"{row[0]},{row[1]},{row[2]}\n")
 
     cur.execute("""WITH t AS (
                    SELECT id,
@@ -62,15 +70,15 @@ def main():
 
     plt.subplot(2, 1, 1)
     plt.plot(time_sec, max_latency_sec)
-    plt.ylabel('Latency, sec')
-    plt.title('Latency and Throughput')
+    plt.ylabel('Max latency, sec')
+    plt.title('Max latency and Throughput')
 
     plt.subplot(2, 1, 2)
     plt.plot(time_sec, throughput_mbps)
     plt.ylabel('Throughput, Mbps')
     plt.xlabel('Time, sec')
     
-    plt.savefig(f"report_output/{cur_date}.png")
+    plt.savefig(f"report_output/{report_file_name}.png")
 
 if __name__ == '__main__':
     main()

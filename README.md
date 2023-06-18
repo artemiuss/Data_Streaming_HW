@@ -44,20 +44,25 @@ docker compose -f full-stack.yml down --rmi all -v --remove-orphans
 ## Graphs of the throughput/max latency versus configuration
 
 1. One producer, a topic with one partition, one consumer
-    ![Max Latency](graphs/1_latency.png)
-    ![Throughput](graphs/1_throughput.png)
+    ![Kafka Metrics](report_output/PROD_1_PART_1_CONS_1.png)
 2. One producer, a topic with one partition, 2 consumers
-    ![Max Latency](graphs/2_latency.png)
-    ![Throughput](graphs/2_throughput.png)
+    ![Kafka Metrics](report_output/PROD_1_PART_1_CONS_2.png)
 3. One producer, a topic with 2 partitions, 2 consumers
-    ![Max Latency](graphs/3_latency.png)
-    ![Throughput](graphs/3_throughput.png)
+    ![Kafka Metrics](report_output/PROD_1_PART_2_CONS_2.png)
 4. One producer, a topic with 5 partitions, 5 consumers
-    ![Max Latency](graphs/4_latency.png)
-    ![Throughput](graphs/4_throughput.png)
+    ![Kafka Metrics](report_output/PROD_1_PART_5_CONS_5.png)
 5. One producer, a topic with 10 partitions, 1 consumers
-    ![Max Latency](graphs/5_latency.png)
-    ![Throughput](graphs/5_throughput.png)
+    ![Kafka Metrics](report_output/PROD_1_PART_10_CONS_1.png)
 6. One producer, a topic with 10 partitions, 5 consumers
-    ![Max Latency](graphs/6_latency.png)
-    ![Throughput](graphs/6_throughput.png)
+    ![Kafka Metrics](report_output/PROD_1_PART_10_CONS_5.png)
+7. One producer, a topic with 10 partitions, 10 consumers
+    ![Kafka Metrics](report_output/PROD_1_PART_10_CONS_10.png)
+8. 2 producers (input data should be split into 2 parts somehow), a topic with 10 partitions, 10 consumers
+    ![Kafka Metrics](report_output/PROD_2_PART_10_CONS_10.png)
+
+## Final Report
+
+![Kafka Metrics](report_output/final_report.png)
+
+
+
