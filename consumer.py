@@ -2,6 +2,7 @@
 import sys, os, time, json, datetime, psycopg2
 from kafka import KafkaConsumer
 from dotenv import load_dotenv
+import subprocess
 
 def main():
     load_dotenv()
@@ -24,6 +25,16 @@ def main():
     PG_HOST = os.getenv("PG_HOST")
     PG_PORT = os.getenv("PG_PORT")
 
+    # wait PostreSQL to start
+    while True:
+        try:
+            pg_conn = psycopg2.connect(user=PG_USER, password=PG_PASSWORD, database=PG_DATABASE, host=PG_HOST, port=PG_PORT)
+            pg_conn.close()
+            print("PostgreSQL has started successfully.")
+            break
+        except psycopg2.OperationalError as e:
+            time.sleep(1)
+    
     pg_conn = psycopg2.connect(user=PG_USER, password=PG_PASSWORD, database=PG_DATABASE, host=PG_HOST, port=PG_PORT)
     cur = pg_conn.cursor()
     

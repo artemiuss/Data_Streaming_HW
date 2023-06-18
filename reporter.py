@@ -14,13 +14,13 @@ def main():
     PARTITIONS = 1 if PARTITIONS is None else int(PARTITIONS)
     CONSUMERS = 1 if CONSUMERS is None else int(CONSUMERS)
 
-    report_file_name = f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}"
-
     PG_USER = os.getenv("PG_USER")
     PG_PASSWORD = os.getenv("PG_PASSWORD")
     PG_DATABASE = os.getenv("PG_DATABASE")
     PG_HOST = os.getenv("PG_HOST")
     PG_PORT = os.getenv("PG_PORT")
+
+    report_file_name = f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}"
 
     pg_conn = psycopg2.connect(user=PG_USER, password=PG_PASSWORD, database=PG_DATABASE, host=PG_HOST, port=PG_PORT)
     cur = pg_conn.cursor()
@@ -36,7 +36,7 @@ def main():
     print(f"Max latency: {row[1]} sec")
     print(f"Throughput: {row[2]} Mbps")
 
-    with open(f"report_output/{report_file_name}.csv", 'a', newline='') as file:
+    with open(f"report_output/{report_file_name}.csv", 'w', newline='') as file:
         file.write(f"total time, max latency, throughput\n")
         file.write(f"{row[0]},{row[1]},{row[2]}\n")
 

@@ -12,7 +12,6 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
-
 docker compose down
 
 # 2. One producer, a topic with one partition, 2 consumers
