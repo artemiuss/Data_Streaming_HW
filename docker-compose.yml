@@ -38,8 +38,6 @@ services:
       - kafka-stack-docker-compose_default
     environment:
       PRODUCERS: ${PRODUCERS}
-      PARTITIONS: ${PARTITIONS}
-      CONSUMERS: ${CONSUMERS}
 
   consumer:
     container_name: consumer
@@ -56,8 +54,6 @@ services:
     networks:
       - kafka-stack-docker-compose_default
     environment:
-      PRODUCERS: ${PRODUCERS}
-      PARTITIONS: ${PARTITIONS}
       CONSUMERS: ${CONSUMERS}
 
   reporter:

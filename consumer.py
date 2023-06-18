@@ -2,7 +2,31 @@
 import sys, os, time, json, datetime, psycopg2, multiprocessing
 from kafka import KafkaConsumer
 from dotenv import load_dotenv
-import subprocess
+
+def consume(kafka_host, kafka_port, kafka_topic, pg_conn):
+    consumer = KafkaConsumer(
+                                kafka_topic,
+                                bootstrap_servers=[f"{kafka_host}:{kafka_port}"],
+                                auto_offset_reset='earliest', # consume earliest available messages, don't commit offsets
+                                consumer_timeout_ms=1000, # StopIteration if no message after 1sec
+                                value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+                                group_id='my-group'
+                            )
+    cur = pg_conn.cursor()
+
+    for message in consumer:
+        print (f"partition={message.partition}, offset={message.offset}, key={message.key}, timestamp={message.timestamp}")
+        #print (f"value={message.value}")
+        #time.sleep(1)
+        created = int(message.value['created'])
+        processed = int(datetime.datetime.utcnow().timestamp()*1e3)
+        size = sys.getsizeof(json.dumps(message.value))
+        cur.execute("INSERT INTO kafka_throughput_metrics (created, processed, size) VALUES (%s, %s, %s)"
+                    ,(created, processed, size))
+        pg_conn.commit()
+
+    cur.close()
+    consumer.close()
 
 def main():
     load_dotenv()
@@ -11,12 +35,7 @@ def main():
     KAFKA_PORT = os.getenv("KAFKA_PORT")
     KAFKA_TOPIC = os.getenv("KAFKA_TOPIC")
 
-    PRODUCERS = os.getenv("PRODUCERS")
-    PARTITIONS = os.getenv("PARTITIONS")
     CONSUMERS = os.getenv("CONSUMERS")
-
-    PRODUCERS = 1 if PRODUCERS is None else int(PRODUCERS)
-    PARTITIONS = 1 if PARTITIONS is None else int(PARTITIONS)
     CONSUMERS = 1 if CONSUMERS is None else int(CONSUMERS)
 
     PG_USER = os.getenv("PG_USER")
@@ -47,26 +66,17 @@ def main():
                     PRIMARY KEY (id))""")
     pg_conn.commit()
 
-    consumer = KafkaConsumer(
-                                KAFKA_TOPIC,
-                                bootstrap_servers=[f"{KAFKA_HOST}:{KAFKA_PORT}"],
-                                auto_offset_reset='earliest', # consume earliest available messages, don't commit offsets
-                                consumer_timeout_ms=1000, # StopIteration if no message after 1sec
-                                value_deserializer=lambda m: json.loads(m.decode('utf-8'))
-                            )
-    for message in consumer:
-        print (f"partition={message.partition}, offset={message.offset}, key={message.key}, timestamp={message.timestamp}")
-        #print (f"value={message.value}")
-        #time.sleep(1)
-        created = int(message.value['created'])
-        processed = int(datetime.datetime.utcnow().timestamp()*1e3)
-        size = sys.getsizeof(json.dumps(message.value))
-        cur.execute("INSERT INTO kafka_throughput_metrics (created, processed, size) VALUES (%s, %s, %s)"
-                    ,(created, processed, size))
-        pg_conn.commit()
+    if CONSUMERS == 1:
+        consume(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, pg_conn)
+    elif CONSUMERS > 1:
+        processes = []
+        for i in range(1,CONSUMERS):
+            p = multiprocessing.Process(target=consume, args=(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, pg_conn,))
+            processes.append(p)
+            p.start()
+        for p in processes:
+            p.join()
 
-    consumer.close()
-    cur.close()
     pg_conn.close()
 
 if __name__ == '__main__':
