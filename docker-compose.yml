@@ -11,6 +11,8 @@ services:
     command: [ "./init_kafka.py"]
     networks:
       - kafka-stack-docker-compose_default
+    environment:
+      PARTITIONS: ${PARTITIONS}
 
   producer:
     container_name: producer
