@@ -36,7 +36,7 @@ def main():
         extension = os.path.splitext(DS_FILENAME)[1]
 
         processes = []
-        for i in range(1,PRODUCERS):
+        for i in range(PRODUCERS):
             p = multiprocessing.Process(target=produce, args=(f"{filename}_part_{i}{extension}", KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC,))
             processes.append(p)
             p.start()

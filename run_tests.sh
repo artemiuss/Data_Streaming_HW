@@ -26,6 +26,7 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
+sleep 60
 docker compose down
 
 # 3. One producer, a topic with 2 partitions, 2 consumers
@@ -40,6 +41,7 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
+sleep 60
 docker compose down
 
 # 4. One producer, a topic with 5 partitions, 5 consumers
@@ -54,6 +56,7 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
+sleep 60
 docker compose down
 
 # 5. One producer, a topic with 10 partitions, 1 consumers
@@ -68,6 +71,7 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
+sleep 60
 docker compose down
 
 # 6. One producer, a topic with 10 partitions, 5 consumers
@@ -82,6 +86,7 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
+sleep 60
 docker compose down
 
 # 7. One producer, a topic with 10 partitions, 10 consumers
@@ -96,6 +101,7 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
+sleep 60
 docker compose down
 
 # 8. 2 producers (input data should be split into 2 parts somehow), a topic with 10 partitions, 10 consumers
@@ -110,6 +116,7 @@ printf "CONSUMERS: ${CONSUMERS}\n"
 
 docker compose up -d
 while [ ! -f "report_output/PROD_${PRODUCERS}_PART_${PARTITIONS}_CONS_${CONSUMERS}.png" ]; do sleep 1; done
+sleep 60
 docker compose down
 
 # Build final report
