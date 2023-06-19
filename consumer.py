@@ -3,15 +3,17 @@ import sys, os, time, json, datetime, psycopg2, multiprocessing
 from kafka import KafkaConsumer
 from dotenv import load_dotenv
 
-def consume(kafka_host, kafka_port, kafka_topic, pg_conn):
+def consume(kafka_host, kafka_port, kafka_topic, pg_user, pg_password, pg_database, pg_host, pg_port):
     consumer = KafkaConsumer(
                                 kafka_topic,
                                 bootstrap_servers=[f"{kafka_host}:{kafka_port}"],
-                                auto_offset_reset='earliest', # consume earliest available messages, don't commit offsets
-                                consumer_timeout_ms=1000, # StopIteration if no message after 1sec
+                                auto_offset_reset='earliest',
+                                consumer_timeout_ms=10000,
                                 value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+                                enable_auto_commit=False,
                                 group_id='my-group'
                             )
+    pg_conn = psycopg2.connect(user=pg_user, password=pg_password, database=pg_database, host=pg_host, port=pg_port)
     cur = pg_conn.cursor()
 
     for message in consumer:
@@ -23,8 +25,8 @@ def consume(kafka_host, kafka_port, kafka_topic, pg_conn):
         size = sys.getsizeof(json.dumps(message.value))
         cur.execute("INSERT INTO kafka_throughput_metrics (created, processed, size) VALUES (%s, %s, %s)"
                     ,(created, processed, size))
-        pg_conn.commit()
-
+    
+    pg_conn.commit()
     cur.close()
     consumer.close()
 
@@ -65,19 +67,18 @@ def main():
                     size BIGINT NOT NULL,
                     PRIMARY KEY (id))""")
     pg_conn.commit()
+    pg_conn.close()
 
     if CONSUMERS == 1:
-        consume(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, pg_conn)
+        consume(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST, PG_PORT)
     elif CONSUMERS > 1:
         processes = []
-        for i in range(1,CONSUMERS):
-            p = multiprocessing.Process(target=consume, args=(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, pg_conn,))
+        for i in range(CONSUMERS):
+            p = multiprocessing.Process(target=consume, args=(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST, PG_PORT,))
             processes.append(p)
             p.start()
         for p in processes:
             p.join()
-
-    pg_conn.close()
 
 if __name__ == '__main__':
     main()
