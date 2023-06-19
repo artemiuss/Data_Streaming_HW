@@ -31,7 +31,7 @@ def main():
 
     if PRODUCERS == 1:
         produce(DS_FILENAME, KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC)
-    elif PRODUCERS > 1:
+    elif PRODUCERS == 2:
         filename = os.path.splitext(DS_FILENAME)[0]
         extension = os.path.splitext(DS_FILENAME)[1]
 

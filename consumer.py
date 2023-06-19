@@ -19,14 +19,14 @@ def consume(kafka_host, kafka_port, kafka_topic, pg_user, pg_password, pg_databa
     for message in consumer:
         print (f"partition={message.partition}, offset={message.offset}, key={message.key}, timestamp={message.timestamp}")
         #print (f"value={message.value}")
-        #time.sleep(1)
+        #time.sleep(0.001)
         created = int(message.value['created'])
         processed = int(datetime.datetime.utcnow().timestamp()*1e3)
         size = sys.getsizeof(json.dumps(message.value))
         cur.execute("INSERT INTO kafka_throughput_metrics (created, processed, size) VALUES (%s, %s, %s)"
                     ,(created, processed, size))
     
-    pg_conn.commit()
+        pg_conn.commit()
     cur.close()
     consumer.close()
 
@@ -69,16 +69,13 @@ def main():
     pg_conn.commit()
     pg_conn.close()
 
-    if CONSUMERS == 1:
-        consume(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST, PG_PORT)
-    elif CONSUMERS > 1:
-        processes = []
-        for i in range(CONSUMERS):
-            p = multiprocessing.Process(target=consume, args=(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST, PG_PORT,))
-            processes.append(p)
-            p.start()
-        for p in processes:
-            p.join()
+    processes = []
+    for i in range(CONSUMERS):
+        p = multiprocessing.Process(target=consume, args=(KAFKA_HOST, KAFKA_PORT, KAFKA_TOPIC, PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST, PG_PORT,))
+        processes.append(p)
+        p.start()
+    for p in processes:
+        p.join()
 
 if __name__ == '__main__':
     main()

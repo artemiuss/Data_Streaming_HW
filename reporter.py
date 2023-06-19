@@ -25,39 +25,39 @@ def main():
     pg_conn = psycopg2.connect(user=PG_USER, password=PG_PASSWORD, database=PG_DATABASE, host=PG_HOST, port=PG_PORT)
     cur = pg_conn.cursor()
 
-    cur.execute("""SELECT ROUND((MAX(processed) - MIN(created))/1000.0,2) AS total_time_sec,
-                   ROUND(MAX(processed - created)/1000.0,2) AS max_latency_sec,
-                   ROUND(SUM(size/1024.0/1024.0)*8/((MAX(processed) - MIN(created))/1000.0),2) AS throughput_mbps
-                   FROM kafka_throughput_metrics""")
+    cur.execute("""SELECT COUNT(*),
+ROUND((MAX(processed) - MIN(created))/1000.0,2) AS total_time_sec,
+ROUND(MAX(processed - created)/1000.0,2) AS max_latency_sec,
+ROUND(SUM(size/1024.0/1024.0)*8/((MAX(processed) - MIN(processed))/1000.0),2) AS throughput_mbps
+FROM kafka_throughput_metrics""")
 
     row = cur.fetchone()
 
-    print(f"Total time: {row[0]} sec")
-    print(f"Max latency: {row[1]} sec")
-    print(f"Throughput: {row[2]} Mbps")
+    print(f"Total time: {row[1]} sec")
+    print(f"Max latency: {row[2]} sec")
+    print(f"Throughput: {row[3]} Mbps")
 
     with open(f"report_output/{report_file_name}.csv", 'w', newline='') as file:
         file.write(f"total time, max latency, throughput\n")
-        file.write(f"{row[0]},{row[1]},{row[2]}\n")
+        file.write(f"{row[1]},{row[2]},{row[3]}\n")
 
     cur.execute("""WITH t AS (
-                   SELECT id,
-                   (MAX(processed - created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0 AS max_latency_sec,
-                   (MAX(processed) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)- MIN(created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0 AS total_time_sec,
-                   (SUM(size) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1024.0/1024.0*8
-                   /((MAX(processed - created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0) AS throughput_mbps
-                   FROM kafka_throughput_metrics)
-                   ,stats AS (
-                   SELECT MIN(total_time_sec) AS time_min, MAX(total_time_sec) AS time_max
-                   FROM t)
-                   SELECT
-                   width_bucket(total_time_sec, time_min, time_max + 1, 20) AS bucket,
-                   ROUND(MAX(total_time_sec),-1) time_sec,
-                   ROUND(MAX(max_latency_sec),-1) AS max_latency_sec,
-                   ROUND(MAX(throughput_mbps),1) AS throughput_mbps
-                   FROM t, stats
-                   GROUP BY bucket
-                   ORDER BY bucket""")
+SELECT t.*,
+(MAX(processed) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)- MIN(created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0 AS total_time_sec
+FROM kafka_throughput_metrics t
+)
+,stats AS (
+SELECT MIN(total_time_sec) AS time_min, MAX(total_time_sec) AS time_max
+FROM t
+)
+SELECT
+width_bucket(total_time_sec, time_min, time_max + 1, 100) AS bucket,
+ROUND((MAX(processed) - MIN(created))/1000.0,-1) AS total_time_sec,
+ROUND(MAX(processed - created)/1000.0,-1) AS max_latency_sec,
+ROUND(SUM(size/1024.0/1024.0)*8/((MAX(processed) - MIN(processed))/1000.0),2) AS throughput_mbps
+FROM t, stats
+GROUP BY bucket
+ORDER BY bucket""")
 
     rows = cur.fetchall()
     
