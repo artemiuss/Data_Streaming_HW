@@ -120,4 +120,4 @@ sleep 60
 docker compose down
 
 # Build final report
-final_report.py
+./final_report.py
