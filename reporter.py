@@ -38,7 +38,7 @@ FROM kafka_throughput_metrics""")
     print(f"Throughput: {row[3]} Mbps")
 
     with open(f"report_output/{report_file_name}.csv", 'w', newline='') as file:
-        file.write(f"total time, max latency, throughput\n")
+        file.write(f"total_time,max_latency,throughput\n")
         file.write(f"{row[1]},{row[2]},{row[3]}\n")
 
     cur.execute("""WITH t AS (

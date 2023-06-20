@@ -11,8 +11,8 @@ def collect_metrics(file_name):
     with open(file_name, encoding="utf8", newline='') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
         for row in reader:
-            time_sec.append(row['total time'])
-            time_sec.append(row['max latency'])
+            time_sec.append(row['total_time'])
+            time_sec.append(row['max_latency'])
             time_sec.append(row['throughput'])
 
 def main():
@@ -21,56 +21,56 @@ def main():
     PARTITIONS=1
     CONSUMERS=1
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     # 2. One producer, a topic with one partition, 2 consumers
     PRODUCERS=1
     PARTITIONS=1
     CONSUMERS=2
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     # 3. One producer, a topic with 2 partitions, 2 consumers
     PRODUCERS=1
     PARTITIONS=2
     CONSUMERS=2
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     # 4. One producer, a topic with 5 partitions, 5 consumers
     PRODUCERS=1
     PARTITIONS=5
     CONSUMERS=5
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     # 5. One producer, a topic with 10 partitions, 1 consumers
     PRODUCERS=1
     PARTITIONS=10
     CONSUMERS=1
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     # 6. One producer, a topic with 10 partitions, 5 consumers
     PRODUCERS=1
     PARTITIONS=10
     CONSUMERS=5
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     # 7. One producer, a topic with 10 partitions, 10 consumers
     PRODUCERS=1
     PARTITIONS=10
     CONSUMERS=10
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     # 8. 2 producers (input data should be split into 2 parts somehow), a topic with 10 partitions, 10 consumers
     PRODUCERS=2
     PARTITIONS=10
     CONSUMERS=10
 
-    collect_metrics(f"PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}")
+    collect_metrics(f"report_output/PROD_{PRODUCERS}_PART_{PARTITIONS}_CONS_{CONSUMERS}.csv")
 
     plt.subplot(2, 1, 1)
     plt.plot(test_names, time_sec)
