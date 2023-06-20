@@ -1,18 +1,14 @@
-WITH t AS (
-SELECT t.*,
-(MAX(processed) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)- MIN(created) OVER(ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))/1000.0 AS total_time_sec
-FROM kafka_throughput_metrics t
-)
-,stats AS (
-SELECT MIN(total_time_sec) AS time_min, MAX(total_time_sec) AS time_max
-FROM t
+WITH stats AS (
+SELECT MIN(processed) AS time_min_processed, MAX(processed) AS time_max_processed,
+MIN(created) AS time_min_created, MAX(created) AS time_max_created
+FROM kafka_throughput_metrics
 )
 SELECT
-width_bucket(total_time_sec, time_min, time_max + 1, 100) AS bucket,
-ROUND((MAX(processed) - MIN(created))/1000.0,1) AS total_time_sec,
+width_bucket(processed, time_min_processed, time_max_processed + 1, 100) AS bucket,
+ROUND((MAX(processed) - MAX(time_min_created))/1000.0,2) AS total_time_sec,
 ROUND(MAX(processed - created)/1000.0,2) AS max_latency_sec,
 ROUND(SUM(size/1024.0/1024.0)*8/((MAX(processed) - MIN(processed))/1000.0),2) AS throughput_mbps
-FROM t, stats
+FROM kafka_throughput_metrics, stats
 GROUP BY bucket
 ORDER BY bucket
 ;
@@ -21,5 +17,6 @@ SELECT COUNT(*),
 ROUND((MAX(processed) - MIN(created))/1000.0,2) AS total_time_sec,
 ROUND(MAX(processed - created)/1000.0,2) AS max_latency_sec,
 ROUND(SUM(size/1024.0/1024.0)*8/((MAX(processed) - MIN(processed))/1000.0),2) AS throughput_mbps
-FROM kafka_throughput_metrics;
+FROM kafka_throughput_metrics
+;
 
