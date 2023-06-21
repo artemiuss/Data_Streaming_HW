@@ -41,7 +41,7 @@ Run tests
 Stop and clean-up
 ```
 docker compose down --rmi all -v --remove-orphans
-cd ../kafka-stack-docker-compose
+cd kafka-stack-docker-compose
 docker compose -f full-stack.yml down --rmi all -v --remove-orphans
 ```
 
